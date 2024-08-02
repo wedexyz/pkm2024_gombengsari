@@ -1,0 +1,460 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<title>SHD Gombengsari</title>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="shortcut icon" href="logouniba.png" type="image/x-icon">
+<link rel="stylesheet" href="gauge.css">
+<link rel="stylesheet" href="stye.css">
+<link rel="stylesheet" href="button.css">
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.0.13/css/all.css" integrity="sha384-DNOHZ68U8hZfKXOrtjWvjxusGo9WQnrNx2sqG0tfsghAvtVlRW3tvkXWZh58N9jp" crossorigin="anonymous">
+</head>
+<body>
+
+<div class="header" >
+    <div></div>
+    <div> </div>
+    <div> </div>
+
+
+    <div class="grid-container">
+  
+        <div> 
+        
+        </div>
+        <div> 
+             </div>
+        <div><img src="logouniba.png" width="100" height="100">
+            <img src="images.png" width="100" height="100">
+            <img src="iconpok.png" width="100" height="100">
+               <H1 style="color: aliceblue;  font-size: 5 em; font-weight: bold;">Smart monitoring SHD</h1>
+               <p style="color: aliceblue;">(Solar Hybrid Dryer)</p> 
+               <p style="padding-top: 50px;color: white;"> Pengabdian kepada Masyarakat - Kemitraan </p>
+                <p style="color: white;margin-right: 270px;">Tahun 2024</p>
+            </div>
+
+      
+
+    </div>
+  
+</div>
+
+<div class="cover">
+   
+    <div class="grid-container">
+  
+        <div>  <p>Dryer Temp</p></div>
+        <div>  <p id="data_tempsuhu">...</p></div>
+        <div><p>Celcius</p></div>
+
+        <div>  <p>Colector Temp </p></div>
+        <div>  <p id="data_dryer">...</p></div>
+        <div><p>Celcius</p></div>
+
+
+    </div>
+  
+<div  id="container"  style="height: 300px;padding: 10px;"></div>
+<div id="container2" style="height: 300px;padding: 10px"></div>
+<div class="center">
+
+</div>
+
+
+<script src="https://code.highcharts.com/stock/highstock.js"></script>
+<script src="https://code.highcharts.com/stock/highcharts-more.js"></script>
+<script src="https://code.highcharts.com/stock/modules/exporting.js"></script>
+<script src="https://code.highcharts.com/stock/modules/export-data.js"></script>
+<script src="https://code.highcharts.com/modules/accessibility.js"></script>
+<script src="https://code.highcharts.com/highcharts.js"></script>
+<script src="https://code.highcharts.com/modules/solid-gauge.js"></script>
+
+<script src="db.js"></script>
+
+<script >
+
+
+
+  var config = {
+    apiKey: "AIzaSyCee89Eeo_nCBTMlwRXlH3SKwOm9mYotvU",
+    authDomain: "iot-hidroponic.firebaseapp.com",
+    databaseURL: "https://iot-hidroponic-default-rtdb.firebaseio.com",
+    projectId: "iot-hidroponic",
+   
+  };
+
+firebase.initializeApp(config);
+var db = firebase.database();
+
+data_suhu  = db.ref('tempSuhu');
+data_dryer = db.ref('dryer');
+/*
+data_debit_air     = db.ref('debit_air');
+data_kapasitas     = db.ref('kapasitas');
+data_konsumsi_daya = db.ref('konsumsi_daya');
+data_ph_air        = db.ref('ph_air');
+data_relay         = db.ref('relay');
+
+*/
+
+data_suhu.on("value", function(snapshot) { document.getElementById('data_tempsuhu').innerHTML=snapshot.val();});
+data_dryer.on("value", function(snapshot) { document.getElementById('data_dryer').innerHTML=snapshot.val();});
+/*
+data_debit_air.on("value", function(snapshot) { document.getElementById('data_debit_air').innerHTML=snapshot.val();})
+data_kapasitas.on("value", function(snapshot) { document.getElementById('data_kapasitas').innerHTML=snapshot.val();});
+data_konsumsi_daya.on("value", function(snapshot) { document.getElementById('data_konsumsi_daya').innerHTML=snapshot.val();});
+
+data_relay.on("value", function(snapshot) {
+     document.getElementById('data_relay').innerHTML=snapshot.val();
+     if (snapshot.val()> 0){
+        document.getElementById('out_relay').innerHTML = "aktif";
+     }else {
+        document.getElementById('out_relay').innerHTML = "non aktif";
+
+     }
+    
+    });
+
+
+
+function tombol_relay() {
+  var x = document.getElementById("myDIV");
+  if (x.innerHTML === "OFF") {
+    x.innerHTML = "ON";
+    db.ref("relay").set("1");
+  } else {
+    x.innerHTML = "OFF";
+    db.ref("relay").set("0");
+  }
+}
+
+
+
+*/
+
+    // Create the chart
+Highcharts.stockChart('container', {
+    chart: {
+        //backgroundColor: 'transparent',
+       // type: 'line',
+        // type: 'areaspline',
+        
+         type: 'spline',
+        events: {
+            load: function () {
+
+                // set up the updating of the chart each second
+                const series = this.series[0];
+                setInterval(function () {
+                        data_suhu.on("value", function(snapshot) {
+                        const x = (new Date()).getTime(), // current time
+                        y= snapshot.val()
+                        series.addPoint([x, y], true, true);
+                });
+                }, 1000);
+            }
+        }
+    },
+
+    accessibility: {
+        enabled: false
+    },
+
+    time: {
+        useUTC: false
+    },
+
+    rangeSelector: {
+        buttons: [{
+            count: 1,
+            type: 'minute',
+            text: '1M'
+        }, {
+            count: 5,
+            type: 'minute',
+            text: '5M'
+        }, {
+            type: 'all',
+            text: 'All'
+        }],
+        inputEnabled: false,
+        selected: 0
+    },
+
+    title: {
+        text: 'Daya'
+    },
+
+    exporting: {
+        enabled: true
+    },
+
+    series: [{
+        name: 'Daya',
+        data: (function () {
+            // generate an array of random data
+            const data = [],
+                time = (new Date()).getTime();
+
+            for (let i = -999; i <= 0; i += 1) {
+                data.push([
+                    time + i * 1000,0
+                   // Math.round(Math.random() * 100)
+                
+                ]);
+            }
+            return data;
+        }())
+    }]
+});
+
+
+Highcharts.stockChart('container2', {
+    chart: {
+        events: {
+            load: function () {
+
+                // set up the updating of the chart each second
+                const series = this.series[0];
+                setInterval(function () {
+                    data_dryer.on("value", function(snapshot) {
+                    const x = (new Date()).getTime(), // current time
+                    y= snapshot.val()
+                series.addPoint([x, y], true, true);
+            });
+            },1000);
+            }
+        }
+    },
+
+    accessibility: {
+        enabled: false
+    },
+
+    time: {
+        useUTC: false
+    },
+
+    rangeSelector: {
+        buttons: [{
+            count: 1,
+            type: 'minute',
+            text: '1M'
+        }, {
+            count: 5,
+            type: 'minute',
+            text: '5M'
+        }, {
+            type: 'all',
+            text: 'All'
+        }],
+        inputEnabled: false,
+        selected: 0
+    },
+
+    title: {
+        text: 'PH'
+    },
+
+    exporting: {
+        enabled: true
+    },
+   
+    series: [{
+        name: 'PH',
+        data: (function () {
+            // generate an array of random data
+            const data = [],
+                time = (new Date()).getTime();
+            
+            for (let i = -999; i <= 0; i += 1) {
+               
+                
+               
+                data.push([
+                    time + i * 1000,
+                    0
+                   // Math.round(Math.random() * 100)
+                  
+                ]);
+           
+            }
+            return data;
+        }
+        
+        
+        ())
+    }]
+});
+/*
+const gaugeOptions = {
+    chart: {
+        type: 'solidgauge',
+       // backgroundColor: 'transparent',
+    },
+
+    title: null,
+
+    pane: {
+        center: ['50%', '85%'],
+        size: '100%',
+        startAngle: -90,
+        endAngle: 90,
+        background: {
+            backgroundColor:
+                Highcharts.defaultOptions.legend.backgroundColor || '#fafafa',
+            borderRadius: 5,
+            innerRadius: '60%',
+            outerRadius: '100%',
+            shape: 'arc'
+        }
+    },
+
+    exporting: {
+        enabled: false
+    },
+
+    tooltip: {
+        enabled: false
+    },
+
+    // the value axis
+    yAxis: {
+        stops: [
+            [0.1, '#55BF3B'], // green
+            [0.5, '#DDDF0D'], // yellow
+            [0.9, '#DF5353'] // red
+        ],
+        lineWidth: 0,
+        tickWidth: 0,
+        minorTickInterval: null,
+        tickAmount: 2,
+        title: {
+            y: -70
+        },
+        labels: {
+            y: 16
+        }
+    },
+
+    plotOptions: {
+        solidgauge: {
+            borderRadius: 3,
+            dataLabels: {
+                y: 5,
+                borderWidth: 0,
+                useHTML: true
+            }
+        }
+    }
+};
+
+// The speed gauge
+const chartSpeed = Highcharts.chart(
+    
+    'container-speed', Highcharts.merge(gaugeOptions, {
+        
+        yAxis: {
+            min: 0,
+            max: 200,
+            title: {
+                text: 'Speed'
+            }
+        },
+
+        credits: {
+            enabled: false
+        },
+
+        series: [{
+            name: 'Speed',
+            data: [80],
+            dataLabels: {
+                format:
+                '<div style="text-align:center">' +
+                '<span style="font-size:25px">{y}</span><br/>' +
+                '<span style="font-size:12px;opacity:0.4">km/h</span>' +
+                '</div>'
+            },
+            tooltip: {
+                valueSuffix: ' km/h'
+            }
+        }]
+
+    }));
+
+// The RPM gauge
+const chartRpm = Highcharts.chart(
+    'container-rpm', Highcharts.merge(gaugeOptions, {
+        yAxis: {
+            min: 0,
+            max: 5,
+            title: {
+                text: 'RPM'
+            }
+        },
+
+        series: [{
+            name: 'RPM',
+            data: [1],
+            dataLabels: {
+                format:
+                '<div style="text-align:center">' +
+                '<span style="font-size:25px">{y:.1f}</span><br/>' +
+                '<span style="font-size:12px;opacity:0.4">' +
+                '* 1000 / min' +
+                '</span>' +
+                '</div>'
+            },
+            tooltip: {
+                valueSuffix: ' revolutions/min'
+            }
+        }]
+
+    }));
+
+// Bring life to the dials
+setInterval(function () {
+    // Speed
+    let point,
+        newVal,
+        inc;
+
+    if (chartSpeed) {
+        point = chartSpeed.series[0].points[0];
+        inc = Math.round((Math.random() - 0.5) * 100);
+        newVal = point.y + inc;
+
+        if (newVal < 0 || newVal > 200) {
+            newVal = point.y - inc;
+        }
+
+        point.update(newVal);
+    }
+
+    // RPM
+    if (chartRpm) {
+        point = chartRpm.series[0].points[0];
+        inc = Math.random() - 0.5;
+        newVal = point.y + inc;
+
+        if (newVal < 0 || newVal > 5) {
+            newVal = point.y - inc;
+        }
+
+        point.update(newVal);
+    }
+}, 2000);
+*/
+
+
+</script>
+</body>
+</html>
+
+
+

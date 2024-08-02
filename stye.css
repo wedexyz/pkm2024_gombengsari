@@ -1,0 +1,86 @@
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  font-family: Arial, Helvetica, sans-serif;
+
+}
+
+/* Style the header */
+.header {
+
+    background-image: url("25273525_d0baf4ad-f053-4d29-afd4-eff12087a717_617_399.jpg");
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: cover;
+
+
+    border: 2px solid #e2ddd9;
+ 
+  text-align: center;
+  font-size: 35px;
+  height: 400px;
+ 
+ 
+}
+
+/* Create three equal columns that floats next to each other */
+.column {
+  float: left;
+  width: 100%;
+  height: 10px; /* Should be removed. Only for demonstration */
+  border: 2px solid #161813;
+ 
+ 
+
+}
+
+/* Clear floats after the columns */
+.row:after {
+  content: "";
+  display: table;
+  clear: both;
+ 
+}
+
+.cover {
+
+    
+    background-image: url("Desain tanpa judul (1).png");
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: cover;
+
+    
+
+}
+
+
+.grid-container {
+    display: grid;
+    grid-template-columns: auto auto auto ;
+    padding: 10px;
+    
+  }
+  
+  .grid-container > div {
+    background-color: rgba(255, 255, 255, 0);
+    font-size: 15px;
+    font-weight: bold;
+    font-weight: 900;
+  }
+/* Style the footer */
+.footer {
+  background-color: #f1f1f1b0;
+  text-align: center;
+  
+}
+
+/* Responsive layout - makes the three columns stack on top of each other instead of next to each other */
+@media (max-width: 600px) {
+  .column {
+    width: 100%;
+  }
+}
